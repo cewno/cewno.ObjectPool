@@ -4,6 +4,28 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
         <TargetFrameworks>net8.0;net6.0;net9.0</TargetFrameworks>
+        <PackageId>cewno.ObjectPool</PackageId>
+        <Title>ObjectPool</Title>
+        <Authors>cewno</Authors>
+        <Description>Object pool</Description>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+        <Copyright>Copyright 2024 cewno    https://github.com/cewno https://cewno.top</Copyright>
+        <PackageProjectUrl>https://github.com/cewno/cewno.ObjectPool</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/cewno/cewno.ObjectPool.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Pool</PackageTags>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     </PropertyGroup>
+
+    <ItemGroup>
+      <None Include="..\LICENSE">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+      </None>
+    </ItemGroup>
 
 </Project>
