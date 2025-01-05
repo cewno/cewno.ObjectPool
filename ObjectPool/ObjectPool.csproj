@@ -9,8 +9,8 @@
         <Title>ObjectPool</Title>
         <Authors>cewno</Authors>
         <Description>Object pool</Description>
-        <AssemblyVersion>1.1.0.0</AssemblyVersion>
-        <FileVersion>1.1.0.0</FileVersion>
+        <AssemblyVersion>1.2.0.0</AssemblyVersion>
+        <FileVersion>1.2.0.0</FileVersion>
         <Copyright>Copyright 2025 cewno    https://github.com/cewno https://cewno.top</Copyright>
         <PackageProjectUrl>https://github.com/cewno/cewno.ObjectPool</PackageProjectUrl>
         <RepositoryUrl>https://github.com/cewno/cewno.ObjectPool.git</RepositoryUrl>
@@ -21,7 +21,7 @@
         <IncludeSymbols>true</IncludeSymbols>
         <SymbolPackageFormat>snupkg</SymbolPackageFormat>
         <RootNamespace>cewno.ObjectPool</RootNamespace>
-        <Version>1.1.0</Version>
+        <Version>1.2.0</Version>
       <LangVersion>13</LangVersion>
     </PropertyGroup>
 
