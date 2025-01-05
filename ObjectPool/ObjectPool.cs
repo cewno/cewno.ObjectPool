@@ -18,8 +18,8 @@ public abstract class ObjectPool<T>
 	private volatile int _pushIndex = 0;
 	private volatile int _pullIndex = 0;
 	private volatile int _okObjectCount = 0;
-	private readonly object _pushLockObject = new object();
-	private readonly object _pullLockObject = new object();
+	private readonly Lock _pushLockObject = new();
+	private readonly Lock _pullLockObject = new();
 
 	public void UpdateSize(int size)
 	{
@@ -202,13 +202,13 @@ public abstract class ObjectPool<T>
 		{
 			return;
 		}
-		
-		Monitor.Enter(_pushLockObject);
-		if (_okObjectCount == _size)
+
+		_pushLockObject.Enter();
+        if (_okObjectCount == _size)
 		{
-			Monitor.Exit(_pushLockObject);
-			
-			return;
+			_pushLockObject.Exit();
+
+            return;
 		}
 		if (_pushIndex == _size)
 		{
@@ -230,8 +230,8 @@ public abstract class ObjectPool<T>
 		}
 		finally
 		{
-			Monitor.Exit(_pushLockObject);
-		}
+            _pushLockObject.Exit();
+        }
 
 		
 
@@ -246,13 +246,12 @@ public abstract class ObjectPool<T>
 			
 			return Create();
 		}
-        Monitor.Enter(_pullLockObject);
+		_pullLockObject.Enter();
         if (_okObjectCount == 0)
         {
-	        Monitor.Exit(_pullLockObject);
-	        
+			_pullLockObject.Exit();
 
-	        return Create();
+            return Create();
         }
         if (_pullIndex == _size)
         {
@@ -274,7 +273,7 @@ public abstract class ObjectPool<T>
         }
         finally
         {
-	        Monitor.Exit(_pullLockObject);
+			_pullLockObject.Exit();
         }
         
 
