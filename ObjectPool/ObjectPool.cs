@@ -1,4 +1,4 @@
-namespace ObjectPool;
+namespace cewno.ObjectPool;
 
 public abstract class ObjectPool<T>
 {

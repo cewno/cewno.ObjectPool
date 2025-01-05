@@ -1,26 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-	<PropertyGroup>
-		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
-		<TargetFrameworks>net8.0;net6.0;net9.0</TargetFrameworks>
-		<PackageId>cewno.ObjectPool</PackageId>
-		<Title>ObjectPool</Title>
-		<Authors>cewno</Authors>
-		<Description>Object pool</Description>
-		<AssemblyVersion>1.0.0.0</AssemblyVersion>
-		<FileVersion>1.0.0.0</FileVersion>
-		<Copyright>Copyright 2024 cewno    https://github.com/cewno https://cewno.top</Copyright>
-		<PackageProjectUrl>https://github.com/cewno/cewno.ObjectPool</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/cewno/cewno.ObjectPool.git</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageTags>Pool</PackageTags>
-		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<LangVersion>13</LangVersion>
-	</PropertyGroup>
+
+    <PropertyGroup>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <TargetFrameworks>net8.0;net6.0;net9.0</TargetFrameworks>
+        <PackageId>cewno.ObjectPool</PackageId>
+        <Title>ObjectPool</Title>
+        <Authors>cewno</Authors>
+        <Description>Object pool</Description>
+        <AssemblyVersion>1.1.0.0</AssemblyVersion>
+        <FileVersion>1.1.0.0</FileVersion>
+        <Copyright>Copyright 2025 cewno    https://github.com/cewno https://cewno.top</Copyright>
+        <PackageProjectUrl>https://github.com/cewno/cewno.ObjectPool</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/cewno/cewno.ObjectPool.git</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
+        <PackageTags>Pool</PackageTags>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <IncludeSymbols>true</IncludeSymbols>
+        <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+        <RootNamespace>cewno.ObjectPool</RootNamespace>
+        <Version>1.1.0</Version>
+      <LangVersion>13</LangVersion>
+    </PropertyGroup>
 
 	<ItemGroup>
 		<None Include="..\LICENSE">
