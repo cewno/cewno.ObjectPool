@@ -9,8 +9,8 @@ public abstract class ObjectPool<T>
 	
 	private volatile int _okObjectCount;
 	
-	private volatile int _pullIndex;
-	private volatile int _pushIndex;
+	private int _pullIndex;
+	private int _pushIndex;
 	
 	private int _size;
 
