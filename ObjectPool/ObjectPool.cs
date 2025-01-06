@@ -2,30 +2,35 @@ namespace cewno.ObjectPool;
 
 public abstract class ObjectPool<T>
 {
-	private int _size;
+	private readonly Lock _pullLockObject = new Lock();
+	private readonly Lock _pushLockObject = new Lock();
+	
 	private T[] _objects;
+	
+	private volatile int _okObjectCount;
+	
+	private volatile int _pullIndex;
+	private volatile int _pushIndex;
+	
+	private int _size;
 
 	public ObjectPool(int size)
 	{
-		this._size = size;
+		_size = size;
 		_objects = new T[size];
 	}
-	
+
 	public int Size => _size;
-	
+
 	public abstract T Create();
-	
-	private volatile int _pushIndex = 0;
-	private volatile int _pullIndex = 0;
-	private volatile int _okObjectCount = 0;
-	private readonly Lock _pushLockObject = new();
-	private readonly Lock _pullLockObject = new();
 
 	public void UpdateSize(int size)
 	{
 		if (size == _size) return;
-		
-		lock (_pushLockObject) { lock (_pullLockObject) 
+
+		lock (_pushLockObject)
+		{
+			lock (_pullLockObject)
 			{
 				T[] temp = new T[size];
 				if (0 < _okObjectCount)
@@ -43,17 +48,14 @@ public abstract class ObjectPool<T>
 							 *
 							 *
 							 */
-							
-
 							Array.Copy(_objects, _pullIndex, temp, 0, _okObjectCount);
 							_pushIndex -= _pullIndex;
 						}
 						else
 						{
-
 							/* h = 可用  o = 旧   n = 空 / 旧的
 							 * h = ok    o = old  n = null / old
-                             *
+							 *
 							 *                              _pullIndex
 							 * 0           _pushIndex          | _size - _pullIndex + 1|
 							 * |  _pushIndex  |                |            ------------
@@ -63,16 +65,12 @@ public abstract class ObjectPool<T>
 							 *            _pushIndex      _pullIndex
 							 */
 							int length = _size - _pullIndex;
-							
-							Array.Copy(_objects, _pullIndex, temp, 0, length);
-							
-							
 
+							Array.Copy(_objects, _pullIndex, temp, 0, length);
 							Array.Copy(_objects, 0, temp, length, _pushIndex);
 
 							_pushIndex += length;
 						}
-
 					}
 					else
 					{
@@ -93,8 +91,8 @@ public abstract class ObjectPool<T>
 								length = size;
 								_pushIndex = 0;
 								_okObjectCount = size;
-
-							}else if (size == length)
+							}
+							else if (size == length)
 							{
 								_pushIndex = 0;
 							}
@@ -102,14 +100,12 @@ public abstract class ObjectPool<T>
 							{
 								_pushIndex = length;
 							}
-							
+
 
 							Array.Copy(_objects, _pullIndex, temp, 0, length);
-
 						}
 						else
 						{
-
 							/* h = 可用  o = 旧   n = 空 / 旧的
 							 * h = ok    o = old  n = null / old
 							 *
@@ -127,24 +123,18 @@ public abstract class ObjectPool<T>
 								length = size;
 								_pushIndex = length;
 								_okObjectCount = size;
-								
 
 								Array.Copy(_objects, _pullIndex, temp, 0, length);
-
-							}else if (size == length)
+							}
+							else if (size == length)
 							{
 								_pushIndex = 0;
 								_okObjectCount = size;
 
-								
-
 								Array.Copy(_objects, _pullIndex, temp, 0, length);
-
 							}
 							else
 							{
-								
-
 								Array.Copy(_objects, _pullIndex, temp, 0, length);
 
 								int index = length;
@@ -154,27 +144,21 @@ public abstract class ObjectPool<T>
 									length = size - length;
 									_pushIndex = 0;
 									_okObjectCount = size;
-
-
-								}else if (size == length2)
+								}
+								else if (size == length2)
 								{
 									length = _pushIndex;
 									_pushIndex = 0;
 									_okObjectCount = size;
-
 								}
 								else
 								{
 									length = _pushIndex;
 									_pushIndex = length2;
 								}
-								
 
 								Array.Copy(_objects, 0, temp, index, length);
-
-
 							}
-
 						}
 					}
 				}
@@ -182,7 +166,6 @@ public abstract class ObjectPool<T>
 				{
 					_pushIndex = 0;
 				}
-				
 
 				_pullIndex = 0;
 				_objects = temp;
@@ -192,24 +175,20 @@ public abstract class ObjectPool<T>
 			}
 		}
 	}
-
-
 	
 	public void Push(T obj)
 	{
 		int index;
-		if (_okObjectCount == _size)
-		{
-			return;
-		}
+		if (_okObjectCount == _size) return;
 
 		_pushLockObject.Enter();
-        if (_okObjectCount == _size)
+		if (_okObjectCount == _size)
 		{
 			_pushLockObject.Exit();
 
-            return;
+			return;
 		}
+
 		if (_pushIndex == _size)
 		{
 			_pushIndex = 1;
@@ -221,8 +200,6 @@ public abstract class ObjectPool<T>
 			_pushIndex++;
 		}
 
-		
-
 		_objects[index] = obj;
 		try
 		{
@@ -230,57 +207,43 @@ public abstract class ObjectPool<T>
 		}
 		finally
 		{
-            _pushLockObject.Exit();
-        }
-
-		
-
+			_pushLockObject.Exit();
+		}
 	}
 
 
 	public T Pull()
 	{
 		int index;
+		if (_okObjectCount == 0) return Create();
+		_pullLockObject.Enter();
 		if (_okObjectCount == 0)
 		{
-			
+			_pullLockObject.Exit();
+
 			return Create();
 		}
-		_pullLockObject.Enter();
-        if (_okObjectCount == 0)
-        {
+
+		if (_pullIndex == _size)
+		{
+			_pullIndex = 1;
+			index = 0;
+		}
+		else
+		{
+			index = _pullIndex++;
+		}
+
+		T pull = _objects[index];
+		try
+		{
+			Interlocked.Add(ref _okObjectCount, -1);
+		}
+		finally
+		{
 			_pullLockObject.Exit();
+		}
 
-            return Create();
-        }
-        if (_pullIndex == _size)
-        {
-	        _pullIndex = 1;
-	        index = 0;
-        }
-        else
-        {
-	        index = _pullIndex++;
-        }
-
-        
-
-
-        T pull = _objects[index];
-        try
-        {
-	        Interlocked.Add(ref _okObjectCount, -1);
-        }
-        finally
-        {
-			_pullLockObject.Exit();
-        }
-        
-
-        return pull;
-		
+		return pull;
 	}
-
-	
-
 }
